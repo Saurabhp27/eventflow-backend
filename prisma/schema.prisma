@@ -18,4 +18,33 @@ model User {
   password  String
   role      Role     @default(USER)
   createdAt DateTime @default(now())
+
+  orders    Order[] 
+}
+
+enum OrderStatus {
+  CREATED
+  PAID
+  CANCELLED
+}
+
+model Order {
+  id          String      @id @default(uuid())
+  userId      String
+  status      OrderStatus @default(CREATED)
+  totalAmount Float
+  createdAt   DateTime    @default(now())
+
+  user        User        @relation(fields: [userId], references: [id])
+  items       OrderItem[]
+}
+
+model OrderItem {
+  id          String  @id @default(uuid())
+  orderId     String
+  productName String
+  price       Float
+  quantity    Int
+
+  order       Order   @relation(fields: [orderId], references: [id])
 }
